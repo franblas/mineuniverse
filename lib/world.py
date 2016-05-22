@@ -5,6 +5,7 @@ from collections import deque
 from pyglet.gl import *
 from texture import Textures
 from block import Block
+from generators import *
 
 class World(object):
 
@@ -46,37 +47,14 @@ class World(object):
         """ Initialize the world by placing all the blocks.
         """
         n = 80  # 1/2 width and height of world
-        s = 1  # step size
-        y = 0  # initial y height
-        for x in xrange(-n, n + 1, s):
-            for z in xrange(-n, n + 1, s):
-                # create a layer stone an grass everywhere.
-                self.add_block((x, y - 2, z), Textures.GRASS, immediate=False)
-                self.add_block((x, y - 3, z), Textures.STONE, immediate=False)
-                if x in (-n, n) or z in (-n, n):
-                    # create outer walls.
-                    for dy in xrange(-2, 3):
-                        self.add_block((x, y + dy, z), Textures.STONE, immediate=False)
+        BaseWorld(n=n, add_block=self.add_block)
 
-        # generate the hills randomly
+        # generate forms
         o = n - 10
-        for _ in xrange(120):
-            a = random.randint(-o, o)  # x position of the hill
-            b = random.randint(-o, o)  # z position of the hill
-            c = -1  # base of the hill
-            h = random.randint(1, 6)  # height of the hill
-            s = random.randint(4, 8)  # 2 * s is the side length of the hill
-            d = 1  # how quickly to taper off the hills
-            t = random.choice([Textures.GRASS, Textures.SAND, Textures.BRICK])
-            for y in xrange(c, c + h):
-                for x in xrange(a - s, a + s + 1):
-                    for z in xrange(b - s, b + s + 1):
-                        if (x - a) ** 2 + (z - b) ** 2 > (s + 1) ** 2:
-                            continue
-                        if (x - 0) ** 2 + (z - 0) ** 2 < 5 ** 2:
-                            continue
-                        self.add_block((x, y, z), t, immediate=False)
-                s -= d  # decrement side lenth so hills taper off
+        # Square(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=5, h=10, t=Textures.GRASS)
+        # Pyramid(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=5, h=10, t=Textures.GRASS)
+        # Hill(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=5, h=10, t=Textures.GRASS)
+        DoubleHill(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=30, h=25, t=Textures.GRASS)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
