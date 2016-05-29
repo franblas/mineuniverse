@@ -51,10 +51,7 @@ class World(object):
 
         # generate forms
         o = n - 10
-        # Square(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=5, h=10, t=Textures.GRASS)
-        # Pyramid(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=5, h=10, t=Textures.GRASS)
-        # Hill(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=5, h=10, t=Textures.GRASS)
-        DoubleHill(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=30, h=25, t=Textures.GRASS)
+        Sphere(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=80, h=84, t=Textures.GRASS, no_fill=True)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is

@@ -34,6 +34,44 @@ class Square(object):
                 for z in xrange(b - s, b + s + 1):
                     add_block((x, y, z), t, immediate=False)
 
+class Dome(object):
+
+    def __init__(self, n, add_block, x, z, y, h, t, reverse=False, no_fill=False):
+        a, b, c = x, z, y # x, z, y positions
+        s = int(h / 2) # 2 * s is the side length
+        y_start, y_stop, i = c, c + h, 1
+        if reverse: y_start, y_stop, i = c, c - h, -1
+        for y in xrange(y_start,  y_stop, i):
+            for x in xrange(a - s, a + s + 1):
+                for z in xrange(b - s, b + s + 1):
+                    if reverse:
+                        if -((x - a) ** 2) - ((z - b) ** 2) < -((s + 1) ** 2):
+                            continue
+                        if -((x - a) ** 2) -((y - c) ** 2) < -((s + 1) ** 2):
+                            continue
+                        if -((z - b) ** 2) -((y - c) ** 2) < -((s + 1) ** 2):
+                            continue
+                        if no_fill:
+                            if -((x - a) ** 2) - ((z - b) ** 2) > -((y + s - c) ** 2):
+                                continue
+                    else:
+                        if (x - a) ** 2 + (z - b) ** 2 > (s + 1) ** 2:
+                            continue
+                        if (x - a) ** 2 + (y - c) ** 2 > (s + 1) ** 2:
+                            continue
+                        if (z - b) ** 2 + (y - c) ** 2 > (s + 1) ** 2:
+                            continue
+                        if no_fill:
+                            if (x - a) ** 2 + (z - b) ** 2 < (y - s - c) ** 2:
+                                continue
+                    add_block((x, y, z), t, immediate=False)
+
+class Sphere(object):
+
+    def __init__(self, n, add_block, x, z, y, h, t, no_fill):
+        Dome(n, add_block, x, z, y, h, t, no_fill=no_fill)
+        Dome(n, add_block, x, z, y, h, t, reverse=True, no_fill=no_fill)
+
 class Pyramid(object):
 
     def __init__(self, n, add_block, x, z, y, h, t, reverse=False, d=1):
