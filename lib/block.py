@@ -11,7 +11,8 @@ class Block(object):
         ( 0, 0,-1),
     ]
 
-    SECTOR_SIZE = 16
+    SECTOR_SIZE = 32
+    SECTOR_SIZE_Y = 64
 
     def __init__(self):
         pass
@@ -57,5 +58,5 @@ class Block(object):
         sector : tuple of len 3
         """
         x, y, z = self.normalize(position)
-        x, y, z = x / self.SECTOR_SIZE, y / self.SECTOR_SIZE, z / self.SECTOR_SIZE
+        x, y, z = x / self.SECTOR_SIZE, y / self.SECTOR_SIZE_Y, z / self.SECTOR_SIZE
         return (x, 0, z)

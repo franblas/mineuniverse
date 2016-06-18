@@ -46,12 +46,7 @@ class World(object):
     def _initialize(self):
         """ Initialize the world by placing all the blocks.
         """
-        n = 80  # 1/2 width and height of world
-        BaseWorld(n=n, add_block=self.add_block)
-
-        # generate forms
-        o = n - 10
-        Sphere(n=n, add_block=self.add_block, x=random.randint(-o,o), z=random.randint(-o,o), y=80, h=84, t=Textures.GRASS, no_fill=True)
+        BaseWorld(n=40, add_block=self.add_block)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is

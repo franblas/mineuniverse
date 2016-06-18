@@ -1,5 +1,6 @@
 
 import random
+import numpy as np
 
 from texture import Textures
 
@@ -24,9 +25,23 @@ class BaseWorld(object):
                 add_block((x, y - 2, z), Textures.GRASS, immediate=False)
                 add_block((x, y - 3, z), Textures.STONE, immediate=False)
 
+class Flat(object):
+
+    def __init__(self, add_block, x, z, y):
+        print 'Flat'
+        a, b, c = x, z, y
+        a_sign = np.sign(a)
+        b_sign = np.sign(b)
+        print a, b
+        for x in xrange(a - a_sign * 50, a + a_sign * 50, 1):
+            for z in xrange(b - b_sign * 50, b + b_sign * 50, 1):
+                # create a layer stone an grass everywhere.
+                add_block((x, -2, z), Textures.GRASS, immediate=True)
+                add_block((x, -3, z), Textures.STONE, immediate=True)
+
 class Square(object):
 
-    def __init__(self, n, add_block, x, z, y, h, t):
+    def __init__(self, add_block, x, z, y, h, t):
         a, b, c = x, z, y # x, z, y positions
         s = int(h / 2) # 2 * s is the side length
         for y in xrange(c, c + h):
@@ -36,7 +51,7 @@ class Square(object):
 
 class Dome(object):
 
-    def __init__(self, n, add_block, x, z, y, h, t, reverse=False, no_fill=False):
+    def __init__(self, add_block, x, z, y, h, t, reverse=False, no_fill=False, immediate=False):
         a, b, c = x, z, y # x, z, y positions
         s = int(h / 2) # 2 * s is the side length
         y_start, y_stop, i = c, c + h, 1
@@ -64,17 +79,17 @@ class Dome(object):
                         if no_fill:
                             if (x - a) ** 2 + (z - b) ** 2 < (y - s - c) ** 2:
                                 continue
-                    add_block((x, y, z), t, immediate=False)
+                    add_block((x, y, z), t, immediate=immediate)
 
 class Sphere(object):
 
-    def __init__(self, n, add_block, x, z, y, h, t, no_fill):
-        Dome(n, add_block, x, z, y, h, t, no_fill=no_fill)
-        Dome(n, add_block, x, z, y, h, t, reverse=True, no_fill=no_fill)
+    def __init__(self, add_block, x, z, y, h, t, no_fill, immediate):
+        Dome(add_block, x, z, y, h, t, no_fill=no_fill, immediate=immediate)
+        Dome(add_block, x, z, y, h, t, reverse=True, no_fill=no_fill, immediate=immediate)
 
 class Pyramid(object):
 
-    def __init__(self, n, add_block, x, z, y, h, t, reverse=False, d=1):
+    def __init__(self, add_block, x, z, y, h, t, reverse=False, d=1):
         a, b, c = x, z, y # x, z, y positions
         s = int(h / 2)  # 2 * s is the side length of the hill
         y_start, y_stop, i = c, c + h, 1
@@ -87,7 +102,7 @@ class Pyramid(object):
 
 class Hill(object):
 
-    def __init__(self, n, add_block, x, z, y, h, t, reverse=False, d=1):
+    def __init__(self, add_block, x, z, y, h, t, reverse=False, d=1):
         """
             d: how quickly to taper off the hills
         """
@@ -107,13 +122,13 @@ class Hill(object):
 
 class DoubleHill(object):
 
-    def __init__(self, n, add_block, x, z, y, h, t, d=1):
-        Hill(n=n, add_block=add_block, x=x, z=z, y=y, h=h, t=t, d=d)
-        Hill(n=n, add_block=add_block, x=x, z=z, y=y, h=h, t=t, d=d, reverse=True)
+    def __init__(self, add_block, x, z, y, h, t, d=1):
+        Hill(add_block=add_block, x=x, z=z, y=y, h=h, t=t, d=d)
+        Hill(add_block=add_block, x=x, z=z, y=y, h=h, t=t, d=d, reverse=True)
 
 class Planet(object):
 
-    def __init__(self, n, add_block):
+    def __init__(self, add_block):
         pass
 
 class BioDome(object):

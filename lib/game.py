@@ -4,6 +4,7 @@ from pyglet.window import key, mouse
 from texture import Textures
 from block import Block
 from world import World
+from generators import Flat
 
 class Game(pyglet.window.Window):
 
@@ -88,6 +89,9 @@ class Game(pyglet.window.Window):
         # Instance of the model that handles the world.
         self.world = World()
 
+        ### test
+        self.ALREADY_GENERATED = False
+
         # The label that is displayed in the top left of the canvas.
         self.label = pyglet.text.Label('', font_name='Arial', font_size=18,
             x=10, y=self.height - 10, anchor_x='left', anchor_y='top',
@@ -161,6 +165,21 @@ class Game(pyglet.window.Window):
             dz = 0.0
         return (dx, dy, dz)
 
+    ######################################################
+    # test
+    def only_once_a_time(self, sector):
+        sectors_around, r = list(), [-1, 0, 1]
+        for xx in r:
+            for zz in r:
+                sectors_around.append((sector[0] + xx, sector[1], sector[2] + zz))
+        print sectors_around
+        for s in sectors_around:
+            if s not in self.world.sectors:
+                s1, s2, s3 = s
+                Flat(add_block=self.world.add_block, x=int(round(s1)*32), z=int(round(s3)*32), y=0)
+            else:
+                continue
+
     def update(self, dt):
         """ This method is scheduled to be called repeatedly by the pyglet
         clock.
@@ -172,8 +191,16 @@ class Game(pyglet.window.Window):
 
         """
         self.world.process_queue()
+        x, y, z = self.position
         sector = self.blocks.sectorize(self.position)
+
+        # generate new block series
+        if sector == self.sector and not self.ALREADY_GENERATED:
+            self.only_once_a_time(sector)
+            self.ALREADY_GENERATED = True
+
         if sector != self.sector:
+            self.ALREADY_GENERATED = False
             self.world.change_sectors(self.sector, sector)
             if self.sector is None:
                 self.world.process_entire_queue()
