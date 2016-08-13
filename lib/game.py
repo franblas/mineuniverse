@@ -4,7 +4,6 @@ from pyglet.window import key, mouse
 from texture import Textures
 from block import Block
 from world import World
-from generators import Flat
 
 class Game(pyglet.window.Window):
 
@@ -165,21 +164,6 @@ class Game(pyglet.window.Window):
             dz = 0.0
         return (dx, dy, dz)
 
-    ######################################################
-    # test
-    def only_once_a_time(self, sector):
-        sectors_around, r = list(), [-1, 0, 1]
-        for xx in r:
-            for zz in r:
-                sectors_around.append((sector[0] + xx, sector[1], sector[2] + zz))
-        print sectors_around
-        for s in sectors_around:
-            if s not in self.world.sectors:
-                s1, s2, s3 = s
-                Flat(add_block=self.world.add_block, x=int(round(s1)*32), z=int(round(s3)*32), y=0)
-            else:
-                continue
-
     def update(self, dt):
         """ This method is scheduled to be called repeatedly by the pyglet
         clock.
@@ -193,14 +177,7 @@ class Game(pyglet.window.Window):
         self.world.process_queue()
         x, y, z = self.position
         sector = self.blocks.sectorize(self.position)
-
-        # generate new block series
-        if sector == self.sector and not self.ALREADY_GENERATED:
-            self.only_once_a_time(sector)
-            self.ALREADY_GENERATED = True
-
         if sector != self.sector:
-            self.ALREADY_GENERATED = False
             self.world.change_sectors(self.sector, sector)
             if self.sector is None:
                 self.world.process_entire_queue()
@@ -491,7 +468,8 @@ class Game(pyglet.window.Window):
         # Set the fog color.
         glFogfv(GL_FOG_COLOR, (GLfloat * 4)(self.FOG_RED, self.FOG_GREEN, self.FOG_BLUE, self.FOG_ALPHA))
         # Say we have no preference between rendering speed and quality.
-        glHint(GL_FOG_HINT, GL_DONT_CARE)
+        # glHint(GL_FOG_HINT, GL_DONT_CARE)
+        glHint(GL_FOG_HINT, GL_FASTEST)
         # Specify the equation used to compute the blending factor.
         glFogi(GL_FOG_MODE, GL_LINEAR)
         # How close and far away fog starts and ends. The closer the start and end,

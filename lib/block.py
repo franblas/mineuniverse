@@ -12,7 +12,7 @@ class Block(object):
     ]
 
     SECTOR_SIZE = 32
-    SECTOR_SIZE_Y = 64
+    SECTOR_SIZE_Y = 2
 
     def __init__(self):
         pass
@@ -60,3 +60,23 @@ class Block(object):
         x, y, z = self.normalize(position)
         x, y, z = x / self.SECTOR_SIZE, y / self.SECTOR_SIZE_Y, z / self.SECTOR_SIZE
         return (x, 0, z)
+
+    def reverse_sectorize(self, sector):
+        """Returns an array of positions that would be found in a given `sector`.
+
+        Parameters
+        ----------
+        sector: tuple of len 3
+
+        Returns
+        -------
+        positions: tuple of len SECTOR_SIZE**2; containing tuples of len 2
+        """
+        positions = list()
+        sector_x, sector_y, sector_z = sector
+        x_start, z_start = sector_x * self.SECTOR_SIZE, sector_z * self.SECTOR_SIZE
+        x_end, z_end = x_start + self.SECTOR_SIZE, z_start + self.SECTOR_SIZE
+        for x in range(x_start, x_end):
+            for z in range(z_start, z_end):
+                positions += [(x, -2, z)]
+        return tuple(positions)

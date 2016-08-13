@@ -46,7 +46,7 @@ class World(object):
     def _initialize(self):
         """ Initialize the world by placing all the blocks.
         """
-        BaseWorld(n=40, add_block=self.add_block)
+        BaseWorld(n=50, add_block=self.add_block)
 
     def hit_test(self, position, vector, max_distance=8):
         """ Line of sight search from current position. If a block is
@@ -215,6 +215,12 @@ class World(object):
         drawn to the canvas.
 
         """
+        if sector != (0,0,0):
+            positions = self.block.reverse_sectorize(sector)
+            Geni(positions, self.add_block)
+            # Flat(positions, self.add_block)
+        else:
+            pass
         for position in self.sectors.get(sector, []):
             if position not in self.shown and self.exposed(position):
                 self.show_block(position, False)

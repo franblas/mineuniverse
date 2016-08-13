@@ -17,8 +17,7 @@ class Generators(object):
 class BaseWorld(object):
 
     def __init__(self, n, add_block):
-        s = 1  # step size
-        y = 0  # initial y height
+        s, y = 1, 0  # step size & initial y height
         for x in xrange(-n, n + 1, s):
             for z in xrange(-n, n + 1, s):
                 # create a layer stone an grass everywhere.
@@ -27,17 +26,26 @@ class BaseWorld(object):
 
 class Flat(object):
 
-    def __init__(self, add_block, x, z, y):
-        print 'Flat'
-        a, b, c = x, z, y
-        a_sign = np.sign(a)
-        b_sign = np.sign(b)
-        print a, b
-        for x in xrange(a - a_sign * 50, a + a_sign * 50, 1):
-            for z in xrange(b - b_sign * 50, b + b_sign * 50, 1):
-                # create a layer stone an grass everywhere.
-                add_block((x, -2, z), Textures.GRASS, immediate=True)
-                add_block((x, -3, z), Textures.STONE, immediate=True)
+    def __init__(self, positions, add_block):
+        for p in positions:
+            x, y, z = p
+            add_block((x, y, z), Textures.GRASS, immediate=False)
+            # add_block((x, y-1, z), Textures.STONE, immediate=False)
+
+class Geni(object):
+    """docstring for """
+
+    def __init__(self, positions, add_block):
+        for p in positions:
+            x, y, z = p
+            if y == -2:
+                add_block((x, y, z), Textures.GRASS, immediate=False)
+
+            if x%3 == 0:
+                add_block((x, y+6, z), Textures.BRICK, immediate=False)
+            else:
+                pass
+
 
 class Square(object):
 
